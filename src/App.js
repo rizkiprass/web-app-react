@@ -15,7 +15,7 @@ function App() {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost:8080/api/products');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/products`);
         if (!response.ok) {
           throw new Error('Gagal mengambil data produk');
         }
@@ -44,7 +44,7 @@ function App() {
   // Fetch cart from API
   const fetchCart = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/cart/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/${userId}`);
       if (!response.ok) {
         throw new Error('Gagal mengambil data keranjang');
       }
@@ -74,7 +74,7 @@ function App() {
       
       if (existingItem) {
         // If already in cart, increase quantity
-        const response = await fetch('http://localhost:8080/api/cart/update', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/update`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ function App() {
         }
       } else {
         // If not in cart, add with quantity 1
-        const response = await fetch('http://localhost:8080/api/cart/add', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/add`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ function App() {
   // Remove from cart function
   const removeFromCart = async (productId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/cart/${userId}/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/${userId}/${productId}`, {
         method: 'DELETE',
       });
       
@@ -148,7 +148,7 @@ function App() {
         await removeFromCart(productId);
       } else {
         // Otherwise decrease quantity by 1
-        const response = await fetch('http://localhost:8080/api/cart/update', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/update`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ function App() {
   const clearCart = async () => {
     try {
       console.log('Clearing cart for user:', userId);
-      const response = await fetch(`http://localhost:8080/api/cart/clear/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/clear/${userId}`, {
         method: 'DELETE',
       });
       
@@ -263,20 +263,19 @@ function App() {
                   </div>
                 </div>
               ))}
-              <div className="cart-total">
+              
+              <div className="cart-summary">
                 <h3>Total: $ {totalPrice.toLocaleString()}</h3>
-                <div className="cart-buttons">
-                  <button className="clear-cart-btn" onClick={clearCart}>Clear Cart</button>
-                  <button className="checkout-btn">Checkout</button>
-                </div>
+                <button className="checkout-btn">Checkout</button>
+                <button className="clear-cart-btn" onClick={clearCart}>Clear Cart</button>
               </div>
             </div>
           </section>
         )}
       </main>
-
+      
       <footer className="App-footer">
-        <p>&copy; 2024 Electronics Store. All rights reserved.</p>
+        <p>&copy; 2023 Electronics Store. All rights reserved.</p>
       </footer>
     </div>
   );
