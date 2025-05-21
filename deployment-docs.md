@@ -195,17 +195,17 @@ EOF
    ```bash
    sudo mkdir -p /var/www/web-app-react
    cd /var/www/web-app-react
-   sudo git clone https://github.com/rizkiprass/web-app-react.git .
+   sudo git clone https://github.com/rizkiprass/web-app-react.git
    # Atau upload kode secara manual menggunakan SCP/SFTP
    ```
 
-<!-- 4. Buat file konfigurasi untuk mengarahkan ke backend:
+4. Buat file konfigurasi untuk mengarahkan ke backend:
    ```bash
    cd web-app-react
-   cat > .env << EOL
-   REACT_APP_API_URL=http://[BACKEND_EC2_PUBLIC_IP]:8080/api
-   EOL
-   ``` -->
+sudo tee .env.production > /dev/null <<EOF
+REACT_APP_API_URL=/api
+EOF
+   ```
 
 5. Install dependensi dan build aplikasi:
    ```bash
@@ -227,15 +227,28 @@ EOF
    Tambahkan konfigurasi berikut:
    ```
    server {
-       listen 80;
-       server_name _;
-       root /var/www/web-app-react/build;
-       index index.html;
-       
-       location / {
-           try_files $uri $uri/ /index.html;
-       }
-   }
+    listen 80;
+    server_name _;
+    
+    # Serve React app
+    root /var/www/web-app-react/build;
+    index index.html;
+    
+    # Proxy API requests to backend
+    location /api/ {
+        proxy_pass http://10.10.3.41:8080/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    # Handle React routing
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
    ```
    
    ```bash
