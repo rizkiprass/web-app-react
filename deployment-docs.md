@@ -92,6 +92,7 @@ Aplikasi akan di-deploy dengan arsitektur sebagai berikut:
    ```bash
    cd web-app-node
    sudo npm install
+   sudo npm install aws-sdk --save
    ```
 
 5. Buat file .env dengan konfigurasi yang benar:
